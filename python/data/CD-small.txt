@@ -1,0 +1,12 @@
+Starting CD benchmark ...
+
+====GC====D 32 17 140366276245432 140366276302549 
+CD: iterations=1 runtime: 22000000us
+
+CD: iterations=1 average: 22000000us total: 22000000us
+
+
+
+
+Total Runtime: 22000000us
+
