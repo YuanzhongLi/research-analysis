@@ -11,65 +11,64 @@ def read_file(file_path):
   section_start = False
   state = ""
   byte_data = [] # [[total, total_compress, hidden, meta]...]
-  compressed_ratio_data = [] # [[total, hidden, meta]...]
+  compression_ratio_data = [] # [[total, hidden, meta]...]
   cnt = -1
   with open(file_path, "r") as f:
     for line in f:
       if "start" in line:
         section_start = True
         byte_data.append([])
-        compressed_ratio_data.append([])
+        compression_ratio_data.append([])
         cnt += 1
         continue
 
       if "end" in line:
         section_start = False
-        compressed_ratio = ""
         continue
 
       if section_start:
         if "TOTAL" == line.rstrip().rsplit()[0]:
           state = "TOTAL"
           continue
-        if "TOTAL_COMPRESSED" == line.rstrip().rsplit()[0]:
-          state = "TOTAL_COMPRESSED"
+        if "TOTAL_COMPRESSION" == line.rstrip().rsplit()[0]:
+          state = "TOTAL_COMPRESSION"
           continue
-        if "HIDDEN_COMPRESSED" == line.rstrip().rsplit()[0]:
-          state = "HIDDEN_COMPRESSED"
+        if "HIDDEN_COMPRESSION" == line.rstrip().rsplit()[0]:
+          state = "HIDDEN_COMPRESSION"
           continue
-        if "META_COMPRESSED" == line.rstrip().rsplit()[0]:
-          state = "META_COMPRESSED"
+        if "META_COMPRESSION" == line.rstrip().rsplit()[0]:
+          state = "META_COMPRESSION"
           continue
 
         if state == "TOTAL":
           ary = line.rstrip().rsplit()
-          bytes = int(ary[0])
+          bytes = int(ary[1])
           byte_data[cnt].append(bytes)
           state = ""
           continue
-        if state == "TOTAL_COMPRESSED":
+        if state == "TOTAL_COMPRESSION":
           ary = line.rstrip().rsplit()
-          bytes, compressed_ratio = int(ary[0]), float(ary[2])
+          bytes, compression_ratio = int(ary[0]), float(ary[2])
           byte_data[cnt].append(bytes)
-          compressed_ratio_data[cnt].append(compressed_ratio)
+          compression_ratio_data[cnt].append(compression_ratio)
           state = ""
           continue
-        if state == "HIDDEN_COMPRESSED":
+        if state == "HIDDEN_COMPRESSION":
           ary = line.rstrip().rsplit()
-          # compressed_ratio: 全体に対してどけくらい減らしたか
-          # ratio: hidden class全体に対してどれくらい減らしたか
-          bytes, compressed_ratio, ratio = int(ary[0]), float(ary[2]), float(ary[3])
+          # compression_ratio: 全体に対してどれくらいになったか
+          # ratio: hidden class全体に対してどれくらいになったか
+          bytes, compression_ratio, ratio = int(ary[0]), float(ary[2]), float(ary[3])
           byte_data[cnt].append(bytes)
-          compressed_ratio_data[cnt].append(compressed_ratio)
+          compression_ratio_data[cnt].append(compression_ratio)
           state = ""
           continue
-        if state == "META_COMPRESSED":
+        if state == "META_COMPRESSION":
           ary = line.rstrip().rsplit()
-          # compressed_ratio: 全体に対してどけくらい減らしたか
-          # ratio: meta class全体に対してどれくらい減らしたか
-          bytes, compressed_ratio, ratio = int(ary[0]), float(ary[2]), float(ary[3])
+          # compressed_ratio: 全体に対してどれくらいになったか
+          # ratio: meta class全体に対してどれくらいになったか
+          bytes, compression_ratio, ratio = int(ary[0]), float(ary[2]), float(ary[3])
           byte_data[cnt].append(bytes)
-          compressed_ratio_data[cnt].append(compressed_ratio)
+          compression_ratio_data[cnt].append(compression_ratio)
           state = ""
           continue
-  return np.array(byte_data), np.array(compressed_ratio_data)
+  return np.array(byte_data), np.array(compression_ratio_data)

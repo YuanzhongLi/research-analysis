@@ -1,4 +1,4 @@
-# [[byte, type], ... ]
+# [[type, byte, original byte, address, hidden class, data], ... ]
 def read_file(file_path, option="GC"):
   cnt = -1
   ret = []
@@ -17,8 +17,8 @@ def read_file(file_path, option="GC"):
 
       if start:
         l = line.rstrip().rsplit()
-        byte, type, address, hidden_class = int(l[0]), int(l[1]), int(l[2], 16), int(l[3], 16)
-        data = list(map(lambda x: int(x, 16), l[4:]))
-        ret[cnt].append((byte, type, address, hidden_class, data))
+        type, byte, original_byte, address, hidden_class = int(l[0]), int(l[1]), int(l[2]), int(l[3], 16), int(l[4], 16)
+        data = list(map(lambda x: int(x, 16), l[5:]))
+        ret[cnt].append((type, byte, original_byte, address, hidden_class, data))
 
   return ret
