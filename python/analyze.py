@@ -7,6 +7,7 @@ from ReadFile import read_file
 from LZC_algorithm import compress
 from preprocessing import alignment_preprocessing, get_key
 from printout import print_compression_results
+from utils import divide16
 
 CELL_LEN = 8
 INF = (1<<63) - 1
@@ -61,17 +62,17 @@ def alignment_analyze(snap_shot, title, height, \
             meta_class_compression_bits += compression_bits
         else:
           base_dict[key] = data
-          total_bits += 8 * original_byte
+          total_bits += 8 * divide16(original_byte)
           if is_hidden_class(type):
-            hidden_class_compression_bits += 8 * original_byte
+            hidden_class_compression_bits += 8 * divide16(original_byte)
           else:
-            meta_class_compression_bits += 8 * original_byte
+            meta_class_compression_bits += 8 * divide16(original_byte)
       else:
-        total_bits += 8 * original_byte
+        total_bits += 8 * divide16(original_byte)
         if is_hidden_class(type):
-          hidden_class_compression_bits += 8 * original_byte
+          hidden_class_compression_bits += 8 * divide16(original_byte)
         else:
-          meta_class_compression_bits += 8 * original_byte
+          meta_class_compression_bits += 8 * divide16(original_byte)
 
       for _ in range(hs):
         img[h*CELL_LEN:(h+1)*CELL_LEN, 0:width*CELL_LEN] = CellTypeDict[type][1]
@@ -126,17 +127,17 @@ def alignment_analyze(snap_shot, title, height, \
             meta_class_compression_bits += compression_bits
         else:
           base_dict[key] = data
-          total_bits += 8 * original_byte
+          total_bits += 8 * divide16(original_byte)
           if is_hidden_class(type):
-            hidden_class_compression_bits += 8 * original_byte
+            hidden_class_compression_bits += 8 * divide16(original_byte)
           else:
-            meta_class_compression_bits += 8 * original_byte
+            meta_class_compression_bits += 8 * divide16(original_byte)
       else:
-        total_bits += 8 * original_byte
+        total_bits += 8 * divide16(original_byte)
         if is_hidden_class(type):
-          hidden_class_compression_bits += 8 * original_byte
+          hidden_class_compression_bits += 8 * divide16(original_byte)
         else:
-          meta_class_compression_bits += 8 * original_byte
+          meta_class_compression_bits += 8 * divide16(original_byte)
 
   return total_bits // 8, \
     total_compression_bits // 8, \

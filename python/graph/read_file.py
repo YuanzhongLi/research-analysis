@@ -1,4 +1,12 @@
+import sys
+import pathlib
 import numpy as np
+
+current_dir = pathlib.Path(__file__).resolve().parent
+# モジュールのあるパスを追加
+sys.path.append(str(current_dir)+"/../")
+
+from utils import calc_percent
 
 path = "./results"
 benchmark = "Bounce-small"
@@ -10,9 +18,36 @@ file_path = "{0}/{1}/{2}-analysis.txt".format(path, benchmark, benchmark)
 def read_file(file_path):
   section_start = False
   state = ""
-  byte_data = [] # [[total, total_compress, hidden, meta]...]
-  compression_ratio_data = [] # [[total, hidden, meta]...]
+  total_bytes = 0
+
+  # [[
+  # total,
+  # virtual_total,
+  # virtual_hidden,
+  # virtula_meta,
+  # total_hidden,
+  # total_meta
+  # total_compress,
+  # hidden_compress,
+  # meta_compress,
+  # ]...]
+  # BCDの場合hiddenとmataがない
+  byte_data = []
+
+  # [[
+  # virtual_total,
+  # virtual_hidden,
+  # virtual_meta,
+  # total_hidden,
+  # total_meta,
+  # total_compress,
+  # hidden_compress,
+  # meta_compress
+  # ]...]
+  # BCDの場合hiddenとmataがない
+  compression_ratio_data = []
   cnt = -1
+
   with open(file_path, "r") as f:
     for line in f:
       if "start" in line:
@@ -30,6 +65,21 @@ def read_file(file_path):
         if "TOTAL" == line.rstrip().rsplit()[0]:
           state = "TOTAL"
           continue
+        if "VIRTUAL_TOTAL" == line.rstrip().rsplit()[0]:
+          state = "VIRTUAL_TOTAL"
+          continue
+        if "VIRTUAL_HIDDEN" == line.rstrip().rsplit()[0]:
+          state = "VIRTUAL_HIDDEN"
+          continue
+        if "VIRTUAL_META" == line.rstrip().rsplit()[0]:
+          state = "VIRTUAL_META"
+          continue
+        if "HIDDEN_TOTAL" == line.rstrip().rsplit()[0]:
+          state = "HIDDEN_TOTAL"
+          continue
+        if "META_TOTAL" == line.rstrip().rsplit()[0]:
+          state = "HIDDEN_TOTAL"
+          continue
         if "TOTAL_COMPRESSION" == line.rstrip().rsplit()[0]:
           state = "TOTAL_COMPRESSION"
           continue
@@ -46,11 +96,51 @@ def read_file(file_path):
           byte_data[cnt].append(bytes)
           state = ""
           continue
+        if state == "VIRTUAL_TOTAL":
+          ary = line.rstrip().rsplit()
+          bytes = int(ary[0])
+          ratio = float(ary[2])
+          byte_data[cnt].append(bytes)
+          compression_ratio_data[cnt].append(ratio)
+          state = ""
+          continue
+        if state == "VIRTUAL_HIDDEN":
+          ary = line.rstrip().rsplit()
+          bytes = int(ary[0])
+          ratio = float(ary[2])
+          byte_data[cnt].append(bytes)
+          compression_ratio_data[cnt].append(ratio)
+          state = ""
+          continue
+        if state == "VIRTUAL_META":
+          ary = line.rstrip().rsplit()
+          bytes = int(ary[0])
+          ratio = float(ary[2])
+          byte_data[cnt].append(bytes)
+          compression_ratio_data[cnt].append(ratio)
+          state = ""
+          continue
+        if state == "HIDDEN_TOTAL":
+          ary = line.rstrip().rsplit()
+          bytes = int(ary[0])
+          ratio = float(ary[2])
+          byte_data[cnt].append(bytes)
+          compression_ratio_data[cnt].append(ratio)
+          state = ""
+          continue
+        if state == "META_TOTAL":
+          ary = line.rstrip().rsplit()
+          bytes = int(ary[0])
+          ratio = float(ary[2])
+          byte_data[cnt].append(bytes)
+          compression_ratio_data[cnt].append(ratio)
+          state = ""
+          continue
         if state == "TOTAL_COMPRESSION":
           ary = line.rstrip().rsplit()
-          bytes, compression_ratio = int(ary[0]), float(ary[2])
+          bytes, ratio = int(ary[0]), float(ary[2])
           byte_data[cnt].append(bytes)
-          compression_ratio_data[cnt].append(compression_ratio)
+          compression_ratio_data[cnt].append(ratio)
           state = ""
           continue
         if state == "HIDDEN_COMPRESSION":
@@ -72,3 +162,5 @@ def read_file(file_path):
           state = ""
           continue
   return np.array(byte_data), np.array(compression_ratio_data)
+
+# print(read_file("results/Bounce-small/Bounce-small-BCD-alignment-analysis.txt"))

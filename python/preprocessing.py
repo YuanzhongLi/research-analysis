@@ -3,12 +3,12 @@ from random import randint
 
 from cell_types import is_hidden_class, num2color
 from utils import get_key
-from printout import print_total, print_compress_target, print_compress_hidden_target, print_compress_meta_target, print_objects, print_target_objects
+from printout import print_total, print_virtual_total, print_virtual_hidden, print_virtual_meta, print_hidden_total, print_meta_total, print_compress_target, print_compress_hidden_target, print_compress_meta_target, print_objects, print_target_objects
 
 INF = (1<<63) - 1
 
 def alignment_preprocessing(snap_shot, USED_COLORS, detail=True):
-  total_bytes = 0
+  virtual_total_bytes = 0
   original_total_bytes = 0
   hidden_class_bytes = 0
   original_hidden_class_bytes = 0
@@ -24,7 +24,7 @@ def alignment_preprocessing(snap_shot, USED_COLORS, detail=True):
   alignment_height = 0
 
   for type, byte, original_byte, _, hidden_class, _ in snap_shot:
-    total_bytes += byte
+    virtual_total_bytes += byte
     original_total_bytes += original_byte
     object_nums[type] += 1
     object_bytes[type] += byte
@@ -98,6 +98,19 @@ def alignment_preprocessing(snap_shot, USED_COLORS, detail=True):
         idx += 1
 
   print_total(total_types, original_total_bytes)
+  print_virtual_total(virtual_total_bytes, original_total_bytes)
+  print_virtual_hidden(
+    hidden_class_bytes,
+    original_total_bytes,
+    virtual_total_bytes
+  )
+  print_virtual_meta(
+    meta_class_bytes,
+    original_total_bytes,
+    virtual_total_bytes
+  )
+  print_hidden_total(original_hidden_class_bytes, original_total_bytes)
+  print_meta_total(original_meta_class_bytes, original_total_bytes)
   print_compress_target(
     compress_target_types,
     original_compress_target_bytes,

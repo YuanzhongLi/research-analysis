@@ -5,6 +5,48 @@ def print_total(total_types, total_bytes):
   print("TOTAL TYPES B KB")
   print(total_types, total_bytes, b2kb(total_bytes))
 
+def print_virtual_total(virtual_total_bytes, original_total_bytes):
+  print("VIRTUAL_TOTAL B KB %")
+  print(
+    virtual_total_bytes,
+    b2kb(virtual_total_bytes),
+    calc_percent(virtual_total_bytes, original_total_bytes)
+  )
+
+def print_virtual_hidden(hidden_class_bytes, original_total_bytes, virtual_total_bytes):
+  print("VIRTUAL_HIDDEN B KB % %")
+  print(
+    hidden_class_bytes,
+    b2kb(hidden_class_bytes),
+    calc_percent(hidden_class_bytes, original_total_bytes),
+    calc_percent(hidden_class_bytes, virtual_total_bytes)
+  )
+
+def print_virtual_meta(meta_class_bytes, original_total_bytes, virtual_total_bytes):
+  print("VIRTUAL_META B KB % %")
+  print(
+    meta_class_bytes,
+    b2kb(meta_class_bytes),
+    calc_percent(meta_class_bytes, original_total_bytes),
+    calc_percent(meta_class_bytes, virtual_total_bytes)
+  )
+
+def print_hidden_total(original_hidden_class_bytes, original_total_bytes):
+  print("HIDDEN_TOTAL B KB %")
+  print(
+    original_hidden_class_bytes,
+    b2kb(original_hidden_class_bytes),
+    calc_percent(original_hidden_class_bytes, original_total_bytes)
+  )
+
+def print_meta_total(original_meta_class_bytes, original_total_bytes):
+  print("META_TOTAL B KB")
+  print(
+    original_meta_class_bytes,
+    b2kb(original_meta_class_bytes),
+    calc_percent(original_meta_class_bytes, original_total_bytes)
+  )
+
 def print_compress_target(
   compress_target_types,
   original_compress_target_bytes,

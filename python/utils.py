@@ -14,3 +14,7 @@ def get_key(type, hidden_class, byte):
     return (-1, hidden_class)
   else:
     return (type, byte)
+
+# 16byte何個分が必要でそのトータルのbyte数を返す
+def divide16(x):
+  return ((x + 15) // 16) * 16
