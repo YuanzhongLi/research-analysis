@@ -1,17 +1,17 @@
 # [[type, byte, original byte, address, hidden class, data], ... ]
-def read_file(file_path, option="GC"):
+def read_file(file_path, dump="GC"):
   cnt = -1
   ret = []
   with open(file_path, "r") as f:
     start = False
     for line in f:
-      if line.rstrip() == option:
+      if line.rstrip() == dump:
         ret.append([])
         cnt += 1
         start = True
         continue
 
-      if line.rstrip() == option+"END":
+      if line.rstrip() == dump+"END":
         start = False
         continue
 
@@ -24,20 +24,21 @@ def read_file(file_path, option="GC"):
   return ret
 
 
-def read_BCD_file(file_path, option="BCDGC", type="normal"):
+# type: ["NOR", "AL"]
+def read_BCD_file(file_path, dump="GC", type="NOR"):
   cnt = -1
   ret = []
-  if type == "normal":
+  if type == "NOR":
     with open(file_path, "r") as f:
       start = False
       for line in f:
-        if line.rstrip() == option:
+        if line.rstrip() == dump:
           ret.append([])
           cnt += 1
           start = True
           continue
 
-        if line.rstrip() == option+"END":
+        if line.rstrip() == dump+"END":
           start = False
           continue
 
@@ -45,19 +46,18 @@ def read_BCD_file(file_path, option="BCDGC", type="normal"):
           l = line.rstrip().rsplit()
           data = list(map(lambda x: int(x, 16), l))
           ret[cnt].append((64, data))
-  else: # type = alignment
-    # alignmentでは通常と同じファイルを使用
-    # そのため"BCD"を足したlineがoptionと等しいで判定
+  else: # type = AL
+    # alignmentではOBDと同じファイルを使用
     with open(file_path, "r") as f:
       start = False
       for line in f:
-        if "BCD"+line.rstrip() == option:
+        if line.rstrip() == dump:
           ret.append([])
           cnt += 1
           start = True
           continue
 
-        if "BCD"+line.rstrip() == option+"END":
+        if line.rstrip() == dump+"END":
           start = False
           continue
 

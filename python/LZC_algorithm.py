@@ -48,6 +48,40 @@ def extract_upper_16byte(xs):
     l.append(format(byte2, "04x"))
   return ''.join(l)
 
+# キャッシュラインのブロックのうちtop(0 ~ 6)から始まる2ブロック
+# (2byte)とその他(6byte)に分ける
+def divideLines(x, top=0):
+  re = 0xffffffffffffffff
+  mask = ((1<<16)-1) << (48 - top * 8)
+  reverse_mask = ~mask & re
+  byte2 = (x & mask) >> (48 - top * 8)
+  reverse_masked = x & reverse_mask
+  tmp = (1<<(64 - ((top+2)*8))) - 1
+  byte6 = 0 | ((reverse_masked >> 16) & (~tmp & re)) | (reverse_masked & tmp)
+
+  return byte2, byte6
+
+  # if __debug__:
+  #   print(format(mask, "016x"), format(reverse_mask, "016x"))
+  #   print(format(x, "016x") ,format(byte2, "04x"))
+  #   print(format(x, "016x") ,format(reverse_masked, "016x"), format(byte6, "016x"))
+
+# BCDで2byte * 8を64byteブロックからkeyとして取り出す
+# 残りの6byte * 8はlistとして取り出す
+def extract16byte(xs, top=0):
+  l2 = [] # keyとなる2byte
+  for x in xs:
+    byte2, _ = divideLines(x, top)
+    l2.append(format(byte2, "04x"))
+  return ''.join(l2)
+
+def extract48byte(xs, top=0):
+  l6 = [] # 残りの6byte
+  for x in xs:
+    _, byte6 = divideLines(x, top)
+    l6.append(byte6)
+  return l6
+
 # return list
 def extract_down_48byte(xs):
   l = []
@@ -63,9 +97,9 @@ def compress_6byte(base, x): # base, xはともに6byte
   return 7 + 48-lzc
 
 # 48byte(BCDでの16byteを除いたキャッシュライン)を何bitに圧縮できるか
-def compress_48byte(bases, xs): # bases, xsは普通のもの(8byte * 8)
+def compress_48byte(bases, xs, top=0): # bases, xsは普通のもの(8byte * 8)
   bits = 0
-  for base, x in zip(extract_down_48byte(bases), extract_down_48byte(xs)):
+  for base, x in zip(extract48byte(bases, top), extract48byte(xs, top)):
     bits += compress_6byte(base, x)
   byte16 = 128
   byte48 = byte16 * 3

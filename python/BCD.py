@@ -1,36 +1,48 @@
 import sys
 
-from ReadFile import read_BCD_file
-from LZC_algorithm import compress_48byte, extract_upper_16byte
+from ReadFile import read_BCD_file, read_file
+from LZC_algorithm import compress_48byte, extract_upper_16byte, extract16byte
 from printout import print_total, print_virtual_total
+from create_memory_picture import create_pic_original
 from utils import calc_percent, b2kb, divide16
+from analyze import getOutputPath
+from preprocessing import original_preprocessing
 
-path = "../awfy"
+
 benchmark = sys.argv[1]
-
-option = "BCDGC"
+dump = "GC"
 if (len(sys.argv) > 2):
-  option = sys.argv[2]
-type = "normal"
+  dump = sys.argv[2]
+type = "NOR"
 if (len(sys.argv) > 3):
   type = sys.argv[3]
+top=0
+if (len(sys.argv) > 4):
+  top = int(sys.argv[4])
 
-snap_shots = None
-if type == "normal":
-  snap_shots = read_BCD_file("{0}/{1}-BCD.txt".format(path, benchmark), option)
-elif type == "alignment":
-  snap_shots = read_BCD_file("{0}/{1}-alignment.txt".format(path, benchmark), option, type="alignment")
+snapshots = None
+if type == "NOR":
+  snapshots = read_BCD_file(getOutputPath(benchmark, "BCD", dump), dump, type)
+elif type == "AL":
+  # alignmentではOBDと同じファイルを使用
+  snapshots = read_BCD_file(getOutputPath(benchmark, "OBD", dump), dump, type)
 
+snapshots_NOR = read_file(getOutputPath(benchmark, "NOR", dump), dump)
+snapshot_NOR_num = len(snapshots_NOR)
+section = snapshot_NOR_num // 10
 
-def BCD_analyze(snap_shot):
-  virtual_total_bytes = len(snap_shot) * 64
+#TODO BCD_NORで通常のmemory picを作成を
+def BCD_analyze(snapshot, top):
+  virtual_total_bytes = len(snapshot) * 64
   total_bytes = 0
   compress_target_types = 0
   compress_target_bytes = 0
   dict = {}
-  for original_byte, block in snap_shot:
+
+  #
+  for original_byte, block in snapshot:
     total_bytes += original_byte
-    key = extract_upper_16byte(block)
+    key = extract16byte(block, top)
     if key not in dict:
       dict[key] = [0, 0, block]
     dict[key][0] += 1
@@ -46,10 +58,10 @@ def BCD_analyze(snap_shot):
   total_bits = 0
   total_compression_bits = 0
 
-  for original_byte, block in snap_shot:
+  for original_byte, block in snapshot:
     key = extract_upper_16byte(block)
     if key in base_dict:
-      compression_bits = compress_48byte(base_dict[key], block)
+      compression_bits = compress_48byte(base_dict[key], block, top)
       total_bits += compression_bits
       total_compression_bits += compression_bits
     else:
@@ -87,8 +99,18 @@ def BCD_analyze(snap_shot):
   )
 
 
-for i, snap_shot in enumerate(snap_shots):
+for i, snapshot in enumerate(snapshots):
+  create_pic = True
+  if i >= 10 and i % section != 0 and i < snapshot_NOR_num-10:
+    create_pic = False
+
   print("===== start {0} =====".format(i+1))
-  BCD_analyze(snap_shot)
+  BCD_analyze(snapshot, top)
   print("===== end {0} =====".format(i+1))
   print()
+
+  # create memory pic
+  if create_pic:
+    title = "{0}-{1}".format(dump, i+1)
+    min_address, max_address = original_preprocessing(snapshots_NOR[i])
+    create_pic_original(min_address, max_address, benchmark, snapshots_NOR[i], None, title)

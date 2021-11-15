@@ -1,3 +1,4 @@
+import os
 import sys
 import pathlib
 import numpy as np
@@ -8,9 +9,12 @@ sys.path.append(str(current_dir)+"/../")
 
 from utils import calc_percent
 
-path = "./results"
-benchmark = "Bounce-small"
-file_path = "{0}/{1}/{2}-analysis.txt".format(path, benchmark, benchmark)
+ANALYSIS_PYTHON_RESULTS = os.environ["ANALYSIS_PYTHON_RESULTS"]
+
+def getResultPath(benchmark, memthod, dump, top=0):
+  if top == 0:
+    return "{0}/{1}/{1}-{2}-{3}-analysis.txt".format(ANALYSIS_PYTHON_RESULTS, benchmark, memthod, dump)
+  return "{0}/{1}/{1}-{2}-{3}-{4}-analysis.txt".format(ANALYSIS_PYTHON_RESULTS, benchmark, memthod, dump, top)
 
 ##
 # returns byte_data, compressed_ratio_data
@@ -163,4 +167,5 @@ def read_file(file_path):
           continue
   return np.array(byte_data), np.array(compression_ratio_data)
 
-# print(read_file("results/Bounce-small/Bounce-small-BCD-alignment-analysis.txt"))
+# for i in range(1, 7):
+#   print(read_file(getResultPath("Bounce-small", "BCDAL", "GC", i)))

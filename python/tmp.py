@@ -1,2 +1,3 @@
-txt = "BCDGC"
-print(txt[3:])
+a = "abc"
+print(a.replace("a", "d"))
+print(a)
