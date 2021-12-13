@@ -94,12 +94,12 @@ function Run(benchmarkSuite, name, numIterations, innerIterations) {
   var total = 0;
 
   function reportBenchmark() {
-    print(name + ": iterations=" + numIterations +
-      " average: " + Math.round(total / numIterations) + "us total: " + Math.round(total) + "us\n\n");
+    // print(name + ": iterations=" + numIterations +
+    //   " average: " + Math.round(total / numIterations) + "us total: " + Math.round(total) + "us\n\n");
   }
 
   function printResult(runTime) {
-    print(name + ": iterations=1 runtime: " + Math.round(runTime) + "us\n");
+    // print(name + ": iterations=1 runtime: " + Math.round(runTime) + "us\n");
   }
 
   function measure(bench) {
@@ -121,16 +121,16 @@ function Run(benchmarkSuite, name, numIterations, innerIterations) {
   }
 
   this.printTotal = function () {
-    print("Total Runtime: " + total + "us\n");
+    // print("Total Runtime: " + total + "us\n");
   };
 
   this.runBenchmark = function () {
-    print("Starting " + name + " benchmark ...\n");
+    // print("Starting " + name + " benchmark ...\n");
 
     doRuns(new benchmarkSuite());
 
     reportBenchmark();
-    print("\n");
+    // print("\n");
   };
 }
 
@@ -1478,4 +1478,3 @@ function CD() {
 var run = new Run(CD, "CD", 1, 250);
 run.runBenchmark();
 run.printTotal();
-
