@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ES2020",
     "module": "commonjs",
     "sourceMap": true,
     "outDir": "./dist",
@@ -10,6 +10,11 @@
     "skipLibCheck": true
   },
   "include": [
-    "src/**/*"
+    "src/analysis"
   ],
+  "exclude": [
+    "src/analysis/uint64",
+    "src/analysis/test",
+    "src/analysis/tmp",
+  ]
 }
