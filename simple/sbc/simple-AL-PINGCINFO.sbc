@@ -1,0 +1,52 @@
+fingerprint 86
+funcLength 1
+callentry 0
+sendentry 1
+numberOfLocals 0
+numberOfInstructions 45
+numberOfConstants 7
+setfl 10
+setfl 10
+fixnum 1 20000
+string 2 #0="n"
+setglobal 2 1
+string 3 #1="Array"
+getglobal 3 3
+getglobal 2 2
+move 10 2
+construct 1 3 1
+setfl 10
+getnewa 1
+string 2 #2="A"
+setglobal 2 1
+fixnum 2 0
+string 3 #3="i"
+setglobal 3 2
+jump 20
+specconst 1 undefined
+string 2 #4="Object"
+getglobal 2 2
+construct 1 2 0
+setfl 10
+getnewa 1
+getglobal 2 3
+setpropregstrreg 1 #5="id" 2
+fixnum 2 1048576
+getglobal 4 3
+add 2 2 4
+setpropregstrreg 1 #6="gold" 2
+string 2 #2="A"
+getglobal 2 2
+getglobal 4 3
+setprop 2 4 1
+getglobal 2 3
+addregfix 2 2 1
+setglobal 3 2
+string 3 #3="i"
+getglobal 2 3
+string 4 #0="n"
+getglobal 4 4
+lessthan 2 2 4
+jumptrue 2 -24
+seta 1
+ret
